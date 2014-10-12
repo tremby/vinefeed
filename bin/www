@@ -1,0 +1,15 @@
+#!/usr/bin/env coffee
+
+argv = require('minimist') process.argv.slice(2),
+	default:
+		env: process.env.NODE_ENV
+process.env.NODE_ENV = argv.env if argv.env?
+process.env.PORT = argv.port or process.env.PORT or 3000
+
+app = require '../app'
+app.set 'port', process.env.PORT
+
+console.log "Environment: #{app.get('env')}"
+
+server = app.listen app.get('port'), ->
+	console.log "Listening on port #{server.address().port}"
