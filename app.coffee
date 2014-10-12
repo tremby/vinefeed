@@ -2,6 +2,8 @@ express = require 'express'
 path = require 'path'
 logger = require 'morgan'
 
+process.chdir __dirname
+
 routes = require './routes/index'
 
 app = express()

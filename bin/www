@@ -1,5 +1,7 @@
 #!/usr/bin/env coffee
 
+process.chdir __dirname
+
 argv = require('minimist') process.argv.slice(2),
 	default:
 		env: process.env.NODE_ENV
