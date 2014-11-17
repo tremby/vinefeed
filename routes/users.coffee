@@ -20,6 +20,7 @@ module.exports = (req, res, next) ->
 
 		feed = new Feed
 			title: "Vines by #{if records.length then records[0].username else "user #{user}"}"
+			description: "" # Required in RSS
 			link: "https://vine.co/u/#{user}"
 			image: if records.length then records[0].avatarUrl else undefined
 
