@@ -13,5 +13,5 @@ app.set 'port', process.env.PORT
 
 console.log "Environment: #{app.get('env')}"
 
-server = app.listen app.get('port'), ->
+server = app.listen require('systemd-socket')() || app.get('port'), ->
 	console.log "Listening on port #{server.address().port}"
