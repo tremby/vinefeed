@@ -17,11 +17,13 @@ module.exports = (req, res, next) ->
 			error.status = 500
 			return next error
 		records = body.data.records
+		author = if records.length then records[0].username else "user #{user}"
+		link = "https://vine.co/u/#{user}"
 
 		feed = new Feed
-			title: "Vines by #{if records.length then records[0].username else "user #{user}"}"
+			title: "Vines by #{author}"
 			description: "" # Required in RSS
-			link: "https://vine.co/u/#{user}"
+			link: link
 			image: if records.length then records[0].avatarUrl else undefined
 
 		for record in records
@@ -44,6 +46,10 @@ module.exports = (req, res, next) ->
 				"""
 				date: new Date record.created
 				image: record.thumbnailUrl
+				author: [
+					name: author
+					link: link
+				]
 
 		payload = feed.render if format is 'atom' then 'atom-1.0' else 'rss-2.0'
 		res.set 'Content-Type': if format is 'atom' then 'application/atom+xml' else 'application/rss+xml'
