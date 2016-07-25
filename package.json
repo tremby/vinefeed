@@ -9,7 +9,9 @@
     "feed": "^0.2.6",
     "minimist": "^1.1.0",
     "morgan": "^1.3.2",
-    "request": "^2.45.0",
+    "request": "^2.45.0"
+  },
+  "optionalDependencies": {
     "systemd-socket": "^0.0.0"
   },
   "bin": {
