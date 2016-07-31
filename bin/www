@@ -1,5 +1,10 @@
 #!/usr/bin/env coffee
 
+try
+	systemdsocket = require 'systemd-socket'
+catch e
+	systemdsocket = -> null
+
 process.chdir __dirname
 
 argv = require('minimist') process.argv.slice(2),
@@ -13,5 +18,5 @@ app.set 'port', process.env.PORT
 
 console.log "Environment: #{app.get('env')}"
 
-server = app.listen app.get('port'), ->
+server = app.listen systemdsocket() || app.get('port'), ->
 	console.log "Listening on port #{server.address().port}"
