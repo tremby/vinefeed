@@ -5,38 +5,29 @@ module.exports = (req, res, next) ->
 	user = req.params[0]
 	format = req.params[1]
 
-	request "https://vine.co/api/users/profiles/#{user}", (error, response, body) ->
-		return next error if error?
-		unless response.statusCode is 200
-			error = new Error "Unexpected response code #{response.statusCode} while querying profile"
-			error.status = 500
-			return next error
-		body = JSON.parse body
-		if not body.success or body.error
-			error = new Error "Error retrieving profile. Code: '#{body.code}', message '#{body.error}'"
-			error.status = 500
-			return next error
+	guard = (process, handler) ->
+		return (error, response, body) ->
+			return next error if error?
+			unless response.statusCode is 200
+				error = new Error "Unexpected response code #{response.statusCode} while #{process}"
+				error.status = 500
+				return next error
+			body = JSON.parse body
+			if not body.success or body.error
+				error = new Error "Error #{process}. Code: '#{body.code}', message '#{body.error}'"
+				error.status = 500
+				return next error
+			return handler body.data
 
-		profile = body.data
+	request "https://vine.co/api/users/profiles/#{user}", guard "querying profile", (profile) ->
 		feed = new Feed
 			title: "Vines by #{profile.username}"
 			description: profile.description
 			link: "https://vine.co/u/#{profile.userId}"
 			image: profile.avatarUrl
 
-		request "https://vine.co/api/timelines/users/#{user}", (error, response, body) ->
-			return next error if error?
-			unless response.statusCode is 200
-				error = new Error "Unexpected response code #{response.statusCode} from vine.co"
-				error.status = 500
-				return next error
-			body = JSON.parse body
-			if not body.success or body.error
-				error = new Error "Error from vine.co. Code: '#{body.code}', message '#{body.error}'"
-				error.status = 500
-				return next error
-
-			for record in body.data.records
+		request "https://vine.co/api/timelines/users/#{user}", guard "retrieving posts", (timeline) ->
+			for record in timeline.records
 				id = record.permalinkUrl.replace /.*\//, ''
 				feed.addItem
 					title: record.description
