@@ -20,7 +20,7 @@ module.exports = (req, res, next) ->
 		profile = body.data
 		feed = new Feed
 			title: "Vines by #{profile.username}"
-			description: "" # Required in RSS
+			description: profile.description
 			link: "https://vine.co/u/#{profile.userId}"
 			image: profile.avatarUrl
 
