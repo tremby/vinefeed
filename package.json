@@ -16,5 +16,8 @@
   },
   "bin": {
     "vinefeed": "bin/www"
+  },
+  "scripts": {
+    "start": "coffee bin/www"
   }
 }
